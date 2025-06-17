@@ -1,0 +1,67 @@
+[
+  {
+    "id": 1,
+    "firstname": "Julian",
+    "lastname": "Huber",
+    "date_of_birth": 1989,
+    "picture_path": "data/pictures/tb.jpg",
+    "ekg_tests": [
+      {
+        "id": 1,
+        "date": "10.02.2023",
+        "result_link": "../data/ekg_data/01_Ruhe.txt"
+      },
+      {
+        "id": 2,
+        "date": "11.3.2023",
+        "result_link": "../data/ekg_data/04_Belastung.txt"
+      }
+    ],
+    "fixed": true
+  },
+  {
+    "id": 2,
+    "firstname": "Yannic",
+    "lastname": "Heyer",
+    "date_of_birth": 1967,
+    "picture_path": "data/pictures/js.jpg",
+    "ekg_tests": [
+      {
+        "id": 3,
+        "date": "10.02.2023",
+        "result_link": "../data/ekg_data/02_Ruhe.txt"
+      }
+    ],
+    "fixed": true
+  },
+  {
+    "id": 3,
+    "firstname": "Yunus",
+    "lastname": "Schmirander",
+    "date_of_birth": 1973,
+    "picture_path": "data/pictures/bl.jpg",
+    "ekg_tests": [
+      {
+        "id": 4,
+        "date": "11.03.2023",
+        "result_link": "../data/ekg_data/03_Ruhe.txt"
+      }
+    ],
+    "fixed": true
+  },
+  {
+    "id": 4,
+    "firstname": "MR.",
+    "lastname": "MiauMiau",
+    "date_of_birth": 2000,
+    "picture_path": "data/pictures/katze.jpg",
+    "ekg_tests": [
+      {
+        "id": 5,
+        "date": "12.03.2023",
+        "result_link": "../data/ekg_data/05_Belastung.txt"
+      }
+    ],
+    "fixed": true
+  }
+]
