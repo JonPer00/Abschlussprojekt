@@ -17,7 +17,7 @@
         "result_link": "../data/ekg_data/04_Belastung.txt"
       }
     ],
-    "fixed": true
+    "fixed": false
   },
   {
     "id": 2,
@@ -32,7 +32,7 @@
         "result_link": "../data/ekg_data/02_Ruhe.txt"
       }
     ],
-    "fixed": true
+    "fixed": false
   },
   {
     "id": 3,
@@ -47,7 +47,7 @@
         "result_link": "../data/ekg_data/03_Ruhe.txt"
       }
     ],
-    "fixed": true
+    "fixed": false
   },
   {
     "id": 4,
@@ -59,9 +59,9 @@
       {
         "id": 5,
         "date": "12.03.2023",
-        "result_link": "../data/ekg_data/05_Belastung.txt"
+        "result_link": "../data/ekg_data/simulated_stemi_ecg.csv"
       }
     ],
-    "fixed": true
+    "fixed": false
   }
 ]

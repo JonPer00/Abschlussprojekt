@@ -3,6 +3,7 @@ import json
 from startseite import show_start_page
 from probantenauswahl import show_probantenauswahl, show_plot_page
 from persondb import PersonDB
+from probdel import show_probdel  # <--- NEU
 
 def main():
     """
@@ -25,6 +26,11 @@ def main():
         show_probantenauswahl(person_db)
     elif st.session_state.state == "plot":
         show_plot_page(person_db)
+    elif st.session_state.state == "probdel":  # <--- NEU
+        show_probdel(person_db)
+    elif st.session_state.state == "vergl":
+        from vergl import show_vergleich_page
+        show_vergleich_page(person_db)
 
 if __name__ == "__main__":
     main()

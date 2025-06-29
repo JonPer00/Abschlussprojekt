@@ -1,16 +1,55 @@
 import streamlit as st
-
+import json
+import io
 
 def show_probantenauswahl(person_db):
     """
     Zeigt die Probantenauswahlseite an und ermöglicht die Auswahl eines EKG-Tests.
-    Ermöglicht außerdem das Hinzufügen neuer Personen mit EKG-Test (inkl. Speichern in JSON)
-    und das Löschen nicht-fixierter Probanten.
-    Args:
-        person_db (PersonDB): Die Personen-Datenbank.
     """
-    st.title("Probantenauswahl")
-    st.write("Bitte wählen Sie einen Probanten aus:")
+    # --- Theme und Layout ---
+    st.markdown("""
+        <style>
+        .main { background-color: #f8f9fa; }
+        .stButton>button {
+            background-color: #1f77b4;
+            color: white;
+            font-size: 1.1em;
+            border-radius: 8px;
+            padding: 0.4em 1.5em;
+            margin: 0.3em 0;
+        }
+        .stButton>button:hover {
+            background-color: #105a8b;
+            color: #fff;
+        }
+        .big-title {
+            font-size: 2em;
+            font-weight: bold;
+            color: #1f77b4;
+            margin-bottom: 0.2em;
+        }
+        .subtitle {
+            font-size: 1.1em;
+            color: #333;
+            margin-bottom: 1.2em;
+        }
+        .diag-box {
+            background-color: #e9ecef;
+            border-radius: 8px;
+            padding: 1em;
+            margin-bottom: 1em;
+        }
+        .diag-label {
+            font-weight: bold;
+            color: #1f77b4;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
+    st.markdown('<div class="big-title">👤 Probantenauswahl</div>', unsafe_allow_html=True)
+    st.markdown('<div class="subtitle">Wählen Sie einen Probanten aus und sehen Sie sich die EKG-Tests an.</div>', unsafe_allow_html=True)
+
+    st.write("---")
     if not person_db.persons:
         st.warning("Keine Probanten verfügbar.")
         return
@@ -25,10 +64,10 @@ def show_probantenauswahl(person_db):
             if person.picture_path:
                 st.image(f"../{person.picture_path}", caption="Probantenbild", width=150)
         with col2:
-            st.write(f"**ID:** {person.id}")
-            st.write(f"**Name:** {person.firstname} {person.lastname}")
-            st.write(f"**Geburtsjahr:** {person.date_of_birth}")
-            st.write("### EKG-Tests:")
+            st.markdown(f"**ID:** {person.id}")
+            st.markdown(f"**Name:** {person.firstname} {person.lastname}")
+            st.markdown(f"**Geburtsjahr:** {person.date_of_birth}")
+            st.markdown("### EKG-Tests:")
             for ekg_test in person.ekg_tests:
                 try:
                     ekg_test.load_data()
@@ -49,161 +88,125 @@ def show_probantenauswahl(person_db):
                     st.session_state.state = "plot"
                     st.rerun()
 
+    st.write("---")
     st.button("Zurück zur Startseite", on_click=lambda: st.session_state.update(state="start"))
-
-    # --- Neue Person mit EKG-Test hinzufügen ---
-    st.write("---")
-    st.subheader("Neue Person mit EKG-Test hinzufügen")
-
-    with st.form("add_person_form"):
-        firstname = st.text_input("Vorname")
-        lastname = st.text_input("Nachname")
-        date_of_birth = st.text_input("Geburtsjahr")
-        ekg_test_id = st.text_input("EKG-Test-ID")
-        ekg_test_date = st.text_input("EKG-Test-Datum")
-        ekg_file = st.file_uploader("EKG-Datei (.txt) hochladen", type=["txt"])
-        picture_file = st.file_uploader("Bild hochladen (optional)", type=["jpg", "jpeg", "png"])
-        submitted = st.form_submit_button("Hinzufügen")
-
-        if submitted:
-            from person import Person
-            import uuid
-            import json
-            import os
-
-            # Bild speichern, falls vorhanden
-            picture_path = ""
-            if picture_file is not None:
-                picture_folder = "../data/bilder/"
-                os.makedirs(picture_folder, exist_ok=True)
-                picture_path = os.path.join(picture_folder, picture_file.name)
-                with open(picture_path, "wb") as f:
-                    f.write(picture_file.getbuffer())
-                # Für die Speicherung im JSON ggf. relativen Pfad verwenden:
-                picture_path = f"bilder/{picture_file.name}"
-
-            # EKG-Datei speichern
-            ekg_result_link = ""
-            if ekg_file is not None:
-                ekg_folder = "../data/ekg/"
-                os.makedirs(ekg_folder, exist_ok=True)
-                ekg_result_link = os.path.join(ekg_folder, ekg_file.name)
-                with open(ekg_result_link, "wb") as f:
-                    f.write(ekg_file.getbuffer())
-                ekg_result_link = f"ekg/{ekg_file.name}"
-
-            new_person_dict = {
-                "id": str(uuid.uuid4()),
-                "firstname": firstname,
-                "lastname": lastname,
-                "date_of_birth": date_of_birth,
-                "picture_path": picture_path,
-                "ekg_tests": [
-                    {
-                        "id": ekg_test_id,
-                        "date": ekg_test_date,
-                        "result_link": ekg_result_link
-                    }
-                ],
-                "fixed": False
-            }
-            new_person = Person(new_person_dict)
-            person_db.persons.append(new_person)
-
-            # --- In JSON speichern ---
-            persons_as_dicts = []
-            for p in person_db.persons:
-                persons_as_dicts.append({
-                    "id": p.id,
-                    "firstname": p.firstname,
-                    "lastname": p.lastname,
-                    "date_of_birth": p.date_of_birth,
-                    "picture_path": p.picture_path,
-                    "ekg_tests": [
-                        {
-                            "id": t.test_id,
-                            "date": t.date,
-                            "result_link": t.result_link
-                        } for t in p.ekg_tests
-                    ],
-                    "fixed": getattr(p, "fixed", False)
-                })
-            # Passe ggf. den Pfad an!
-            with open("../data/person_db.json", "w", encoding="utf-8") as f:
-                json.dump(persons_as_dicts, f, ensure_ascii=False, indent=2)
-            # ------------------------
-
-            st.success(f"Person {firstname} {lastname} wurde hinzugefügt!")
-            st.rerun()
-
-    # --- Probant löschen ---
-    st.write("---")
-    st.subheader("Probant löschen")
-
-    # Nur nicht-fixierte Probanten anzeigen
-    deletable_persons = [p for p in person_db.persons if not getattr(p, "fixed", False)]
-    delete_names = [f"{p.firstname} {p.lastname}" for p in deletable_persons]
-
-    if deletable_persons:
-        delete_selection = st.selectbox("Probant zum Löschen auswählen", delete_names, key="delete_select_probant")
-        if st.button("Probant löschen"):
-            person_to_delete = next((p for p in deletable_persons if f"{p.firstname} {p.lastname}" == delete_selection), None)
-            if person_to_delete:
-                person_db.persons.remove(person_to_delete)
-                # Auch aus JSON löschen
-                persons_as_dicts = []
-                for p in person_db.persons:
-                    persons_as_dicts.append({
-                        "id": p.id,
-                        "firstname": p.firstname,
-                        "lastname": p.lastname,
-                        "date_of_birth": p.date_of_birth,
-                        "picture_path": p.picture_path,
-                        "ekg_tests": [
-                            {
-                                "id": t.test_id,
-                                "date": t.date,
-                                "result_link": t.result_link
-                            } for t in p.ekg_tests
-                        ],
-                        "fixed": getattr(p, "fixed", False)
-                    })
-                with open("../data/person_db.json", "w", encoding="utf-8") as f:
-                    import json
-                    json.dump(persons_as_dicts, f, ensure_ascii=False, indent=2)
-                st.success(f"Probant {delete_selection} wurde gelöscht!")
-                st.rerun()
-    else:
-        st.info("Keine löschbaren Probanten vorhanden.")
 
 def show_plot_page(person_db):
     """
     Zeigt die Plot-Seite für das ausgewählte EKG an.
-
-    Args:
-        person_db (PersonDB): Die Personen-Datenbank.
+    Fügt ein Diagnosefeld hinzu, das mit der EKG-Test-ID in der JSON gespeichert wird.
+    Bereits gespeicherte Diagnosen werden angezeigt und können gelöscht werden.
     """
-    st.title("EKG-Daten Plot")
+    st.markdown("""
+        <style>
+        .main { background-color: #f8f9fa; }
+        .big-title {
+            font-size: 2em;
+            font-weight: bold;
+            color: #1f77b4;
+            margin-bottom: 0.2em;
+        }
+        .diag-box {
+            background-color: #e9ecef;
+            border-radius: 8px;
+            padding: 1em;
+            margin-bottom: 1em;
+        }
+        .diag-label {
+            font-weight: bold;
+            color: #1f77b4;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
+    st.markdown('<div class="big-title">📈 EKG-Daten Plot</div>', unsafe_allow_html=True)
+
     ekg_id = st.session_state.get("selected_ekg_id")
     person_id = st.session_state.get("selected_person_id")
     if not ekg_id or not person_id:
         st.warning("Kein Test ausgewählt.")
         return
 
+    # Diagnose immer aus JSON laden, damit sie aktuell ist
+    with open("../data/person_db.json", "r", encoding="utf-8") as f:
+        persons_list = json.load(f)
+
+    diagnosis = ""
+    for p in persons_list:
+        if str(p["id"]) == str(person_id):
+            for test in p.get("ekg_tests", []):
+                if str(test["id"]) == str(ekg_id):
+                    diagnosis = test.get("diagnosis", "")
+
     person = person_db.get_person_by_id(person_id)
-    ekg_test = next((e for e in person.ekg_tests if e.test_id == ekg_id), None)
+    ekg_test = next((e for e in person.ekg_tests if str(e.test_id) == str(ekg_id)), None)
     if not ekg_test:
         st.warning("Kein EKG gefunden.")
         return
 
-    st.write(f"**Test-ID:** {ekg_test.test_id}")
-    st.write(f"**Datum:** {ekg_test.date}")
+    st.markdown(f"**Test-ID:** {ekg_test.test_id}")
+    st.markdown(f"**Datum:** {ekg_test.date}")
 
     try:
         fig, num_peaks, bpm = ekg_test.plot()
-        st.plotly_chart(fig)
-        st.write(f"**Anzahl der Peaks:** {num_peaks}")
-        st.write(f"**Herzfrequenz:** {int(round(bpm))} bpm")
+        st.plotly_chart(fig, use_container_width=True)
+        st.markdown(f"**Anzahl der Peaks:** {num_peaks}")
+        st.markdown(f"**Herzfrequenz:** {int(round(bpm))} bpm")
+
+        # Download-Button für den Plot als PNG
+        buf = io.StringIO()
+        fig.write_html(buf)
+        st.download_button(
+            label="Plot als HTML herunterladen",
+            data=buf.getvalue(),
+            file_name=f"ekg_plot_{ekg_test.test_id}.html",
+            mime="text/html"
+    )
+
     except Exception as e:
         st.error(f"Fehler beim Laden oder Plotten der EKG-Daten: {e}")
+
+
+    st.write("---")
+
+    # Diagnose anzeigen und bearbeiten
+    new_diagnosis = st.text_area(
+        "Diagnose zu diesem EKG-Test",
+        value=diagnosis,
+        key=f"diag_{ekg_id}"
+    )
+
+    if st.button("Diagnose speichern", key=f"save_diag_{ekg_id}"):
+        # Diagnose in JSON speichern
+        for p in persons_list:
+            if str(p["id"]) == str(person_id):
+                for test in p.get("ekg_tests", []):
+                    if str(test["id"]) == str(ekg_id):
+                        test["diagnosis"] = new_diagnosis
+        with open("../data/person_db.json", "w", encoding="utf-8") as f:
+            json.dump(persons_list, f, ensure_ascii=False, indent=2)
+        st.success("Diagnose gespeichert!")
+        st.rerun()
+
+    st.write("---")
+    
+    # Diagnose immer aktuell anzeigen
+    if diagnosis:
+        st.markdown(
+            f'<div class="diag-box"><span class="diag-label">Gespeicherte Diagnose:</span><br>{diagnosis}</div>',
+            unsafe_allow_html=True
+        )
+        if st.button("Diagnose löschen", key=f"del_diag_{ekg_id}"):
+            # Diagnose in JSON löschen
+            for p in persons_list:
+                if str(p["id"]) == str(person_id):
+                    for test in p.get("ekg_tests", []):
+                        if str(test["id"]) == str(ekg_id):
+                            test["diagnosis"] = ""
+            with open("../data/person_db.json", "w", encoding="utf-8") as f:
+                json.dump(persons_list, f, ensure_ascii=False, indent=2)
+            st.success("Diagnose gelöscht!")
+            st.rerun()
+
+    st.write("---")
     st.button("Zurück zur Probantenauswahl", on_click=lambda: st.session_state.update(state="probantenauswahl"))
