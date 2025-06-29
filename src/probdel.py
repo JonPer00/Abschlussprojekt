@@ -57,7 +57,7 @@ def show_probdel(person_db):
             # Bild speichern, falls vorhanden
             picture_path = ""
             if picture_file is not None:
-                picture_folder = "../data/bilder/"
+                picture_folder = "data/bilder/"
                 os.makedirs(picture_folder, exist_ok=True)
                 picture_path = os.path.join(picture_folder, picture_file.name)
                 with open(picture_path, "wb") as f:
@@ -66,14 +66,14 @@ def show_probdel(person_db):
             # EKG-Datei speichern
             ekg_result_link = ""
             if ekg_file is not None:
-                ekg_folder = "../data/ekg/"
+                ekg_folder = "data/ekg/"
                 os.makedirs(ekg_folder, exist_ok=True)
                 ekg_result_link = os.path.join(ekg_folder, ekg_file.name)
                 with open(ekg_result_link, "wb") as f:
                     f.write(ekg_file.getbuffer())
 
-            # Für die JSON: immer relativer Pfad ab ../data/...
-            json_picture_path = picture_path.replace("\\", "/").replace("../", "")
+            # Für die JSON: immer relativer Pfad ab data/...
+            json_picture_path = picture_path.replace("\\", "/").replace("", "")
             json_ekg_result_link = ekg_result_link if not ekg_result_link else os.path.normpath(ekg_result_link).replace("\\", "/")
 
             # Fortlaufende Personen-ID bestimmen
@@ -138,7 +138,7 @@ def show_probdel(person_db):
                     ],
                     "fixed": getattr(p, "fixed", False)
                 })
-            with open("../data/person_db.json", "w", encoding="utf-8") as f:
+            with open("data/person_db.json", "w", encoding="utf-8") as f:
                 json.dump(persons_as_dicts, f, ensure_ascii=False, indent=2)
 
             st.success(f"Person {firstname} {lastname} wurde hinzugefügt!")
@@ -184,7 +184,7 @@ def show_probdel(person_db):
                                 ],
                                 "fixed": getattr(p, "fixed", False)
                             })
-                        with open("../data/person_db.json", "w", encoding="utf-8") as f:
+                        with open("data/person_db.json", "w", encoding="utf-8") as f:
                             json.dump(persons_as_dicts, f, ensure_ascii=False, indent=2)
                         st.success(f"Probant {st.session_state.confirm_delete} wurde gelöscht!")
                         st.session_state.confirm_delete = None

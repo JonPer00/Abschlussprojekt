@@ -105,7 +105,7 @@ def show_vergleich_page(person_db):
 
             # Diagnosefeld für EKG1
             diagnosis1 = ""
-            with open("../data/person_db.json", "r", encoding="utf-8") as f:
+            with open("data/person_db.json", "r", encoding="utf-8") as f:
                 persons_list = json.load(f)
             for p in persons_list:
                 if str(p["id"]) == str(person1.id):
@@ -120,7 +120,7 @@ def show_vergleich_page(person_db):
                         for test in p.get("ekg_tests", []):
                             if str(test["id"]) == str(ekg1.test_id):
                                 test["diagnosis"] = new_diag1
-                with open("../data/person_db.json", "w", encoding="utf-8") as f:
+                with open("data/person_db.json", "w", encoding="utf-8") as f:
                     json.dump(persons_list, f, ensure_ascii=False, indent=2)
                 st.success("Diagnose gespeichert!")
                 st.rerun()
@@ -135,7 +135,7 @@ def show_vergleich_page(person_db):
                             for test in p.get("ekg_tests", []):
                                 if str(test["id"]) == str(ekg1.test_id):
                                     test["diagnosis"] = ""
-                    with open("../data/person_db.json", "w", encoding="utf-8") as f:
+                    with open("data/person_db.json", "w", encoding="utf-8") as f:
                         json.dump(persons_list, f, ensure_ascii=False, indent=2)
                     st.success("Diagnose gelöscht!")
                     st.rerun()
@@ -157,7 +157,7 @@ def show_vergleich_page(person_db):
 
             # Diagnosefeld für EKG2
             diagnosis2 = ""
-            with open("../data/person_db.json", "r", encoding="utf-8") as f:
+            with open("data/person_db.json", "r", encoding="utf-8") as f:
                 persons_list = json.load(f)
             for p in persons_list:
                 if str(p["id"]) == str(person2.id):
@@ -172,7 +172,7 @@ def show_vergleich_page(person_db):
                         for test in p.get("ekg_tests", []):
                             if str(test["id"]) == str(ekg2.test_id):
                                 test["diagnosis"] = new_diag2
-                with open("../data/person_db.json", "w", encoding="utf-8") as f:
+                with open("data/person_db.json", "w", encoding="utf-8") as f:
                     json.dump(persons_list, f, ensure_ascii=False, indent=2)
                 st.success("Diagnose gespeichert!")
                 st.rerun()
@@ -187,7 +187,7 @@ def show_vergleich_page(person_db):
                             for test in p.get("ekg_tests", []):
                                 if str(test["id"]) == str(ekg2.test_id):
                                     test["diagnosis"] = ""
-                    with open("../data/person_db.json", "w", encoding="utf-8") as f:
+                    with open("data/person_db.json", "w", encoding="utf-8") as f:
                         json.dump(persons_list, f, ensure_ascii=False, indent=2)
                     st.success("Diagnose gelöscht!")
                     st.rerun()

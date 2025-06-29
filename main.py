@@ -16,7 +16,7 @@ def main():
     if "selected_person_id" not in st.session_state:
         st.session_state.selected_person_id = None
 
-    # Passe den Pfad an: kein ../ mehr!
+    # Passe den Pfad an: 
     with open("data/person_db.json", "r", encoding="utf-8") as f:
         persons_list = json.load(f)
     person_db = PersonDB(persons_list)
