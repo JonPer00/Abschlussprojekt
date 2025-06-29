@@ -1,9 +1,9 @@
 import streamlit as st
 import json
-from startseite import show_start_page
-from probantenauswahl import show_probantenauswahl, show_plot_page
-from persondb import PersonDB
-from probdel import show_probdel  # <--- NEU
+from src.startseite import show_start_page
+from src.probantenauswahl import show_probantenauswahl, show_plot_page
+from src.persondb import PersonDB
+from src.probdel import show_probdel
 
 def main():
     """
@@ -16,7 +16,8 @@ def main():
     if "selected_person_id" not in st.session_state:
         st.session_state.selected_person_id = None
 
-    with open("../data/person_db.json", "r", encoding="utf-8") as f:
+    # Passe den Pfad an: kein ../ mehr!
+    with open("data/person_db.json", "r", encoding="utf-8") as f:
         persons_list = json.load(f)
     person_db = PersonDB(persons_list)
 
@@ -26,10 +27,10 @@ def main():
         show_probantenauswahl(person_db)
     elif st.session_state.state == "plot":
         show_plot_page(person_db)
-    elif st.session_state.state == "probdel":  # <--- NEU
+    elif st.session_state.state == "probdel":
         show_probdel(person_db)
     elif st.session_state.state == "vergl":
-        from vergl import show_vergleich_page
+        from src.vergl import show_vergleich_page
         show_vergleich_page(person_db)
 
 if __name__ == "__main__":
