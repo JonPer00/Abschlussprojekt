@@ -1,7 +1,7 @@
 import streamlit as st
 import os
 import json
-from person import Person
+from src.person import Person
 
 def show_probdel(person_db):
     """
