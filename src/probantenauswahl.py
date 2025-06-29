@@ -3,6 +3,7 @@ import json
 import io
 import os
 from src.persondb import PersonDB
+import numpy as np
 
 def show_probantenauswahl(person_db):
     """

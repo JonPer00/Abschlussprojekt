@@ -1,7 +1,7 @@
 import pandas as pd
 import plotly.express as px
 import os
-
+import numpy as np
 
 class EKGTest:
     """
