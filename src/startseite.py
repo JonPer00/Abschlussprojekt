@@ -38,7 +38,7 @@ def show_start_page():
     st.markdown('<div class="big-title">💓 EKG Analyse-Tool</div>', unsafe_allow_html=True)
     st.markdown('<div class="subtitle">Willkommen! Analysieren Sie EKG-Daten, verwalten Sie Probanten und visualisieren Sie Herzaktivitäten.</div>', unsafe_allow_html=True)
 
-    st.image("../data/bilder/ekg.png", width=500)
+    st.image("data/bilder/ekg.png", width=500)
 
     st.write("---")
     st.markdown("### Was möchten Sie tun?")
