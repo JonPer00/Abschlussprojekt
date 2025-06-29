@@ -1,4 +1,5 @@
 from ekg import EKGTest
+from src.person import Person
 
 class Person:
     """

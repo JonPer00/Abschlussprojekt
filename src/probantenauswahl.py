@@ -2,6 +2,7 @@ import streamlit as st
 import json
 import io
 import os
+from src.persondb import PersonDB
 
 def show_probantenauswahl(person_db):
     """
