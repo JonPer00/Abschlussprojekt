@@ -166,7 +166,7 @@ def show_plot_page(person_db):
             data=buf.getvalue(),
             file_name=f"ekg_plot_{ekg_test.test_id}.html",
             mime="text/html"
-    )
+        )
 
     except Exception as e:
         st.error(f"Fehler beim Laden oder Plotten der EKG-Daten: {e}")
