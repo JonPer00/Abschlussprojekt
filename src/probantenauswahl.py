@@ -1,6 +1,7 @@
 import streamlit as st
 import json
 import io
+import os
 
 def show_probantenauswahl(person_db):
     """
@@ -62,7 +63,11 @@ def show_probantenauswahl(person_db):
         col1, col2 = st.columns([1, 3])
         with col1:
             if person.picture_path:
-                st.image(f"../{person.picture_path}", caption="Probantenbild", width=150)
+                image_path = os.path.normpath(f"../{person.picture_path}")
+                if os.path.exists(image_path):
+                    st.image(image_path, caption="Probantenbild", width=150)
+                else:
+                    st.warning(f"⚠️ Bild nicht gefunden: {image_path}")
         with col2:
             st.markdown(f"**ID:** {person.id}")
             st.markdown(f"**Name:** {person.firstname} {person.lastname}")
