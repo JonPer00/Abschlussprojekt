@@ -1,5 +1,4 @@
-from ekg import EKGTest
-from src.person import Person
+
 from src.ekg import EKGTest
 
 class Person:
