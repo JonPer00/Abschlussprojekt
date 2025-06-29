@@ -64,7 +64,7 @@ def show_probantenauswahl(person_db):
         col1, col2 = st.columns([1, 3])
         with col1:
             if person.picture_path:
-                image_path = os.path.normpath(f"../{person.picture_path}")
+                image_path = os.path.normpath(person.picture_path)
                 if os.path.exists(image_path):
                     st.image(image_path, caption="Probantenbild", width=150)
                 else:
@@ -134,7 +134,7 @@ def show_plot_page(person_db):
         return
 
     # Diagnose immer aus JSON laden, damit sie aktuell ist
-    with open("../data/person_db.json", "r", encoding="utf-8") as f:
+    with open("data/person_db.json", "r", encoding="utf-8") as f:
         persons_list = json.load(f)
 
     diagnosis = ""
@@ -189,7 +189,7 @@ def show_plot_page(person_db):
                 for test in p.get("ekg_tests", []):
                     if str(test["id"]) == str(ekg_id):
                         test["diagnosis"] = new_diagnosis
-        with open("../data/person_db.json", "w", encoding="utf-8") as f:
+        with open("data/person_db.json", "w", encoding="utf-8") as f:
             json.dump(persons_list, f, ensure_ascii=False, indent=2)
         st.success("Diagnose gespeichert!")
         st.rerun()
@@ -209,7 +209,7 @@ def show_plot_page(person_db):
                     for test in p.get("ekg_tests", []):
                         if str(test["id"]) == str(ekg_id):
                             test["diagnosis"] = ""
-            with open("../data/person_db.json", "w", encoding="utf-8") as f:
+            with open("data/person_db.json", "w", encoding="utf-8") as f:
                 json.dump(persons_list, f, ensure_ascii=False, indent=2)
             st.success("Diagnose gelöscht!")
             st.rerun()
